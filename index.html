@@ -25,7 +25,7 @@
       --success: #79e5b5;
       --shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
       --radius: 22px;
-      --container: 1500px;
+      --container: 1880px;
     }
 
     * {
@@ -90,7 +90,7 @@
     }
 
     .site-shell {
-      width: min(calc(100% - 28px), var(--container));
+      width: min(calc(100% - 20px), var(--container));
       margin-inline: auto;
     }
 
@@ -351,7 +351,7 @@
 
     .gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
       gap: 22px;
     }
 
@@ -909,9 +909,6 @@
 
         <div class="hero-actions">
           <a class="button button-primary" href="#gallery">Découvrir les lots</a>
-          <button class="button button-secondary" type="button" id="copyPortfolioLink">
-            Copier le lien du portfolio
-          </button>
         </div>
       </div>
 
@@ -1053,141 +1050,647 @@
 
         <p class="price" id="modalPrice"></p>
 
-        <ul class="discounts">
-          <li id="modalDiscount50"></li>
-          <li id="modalDiscount200"></li>
-        </ul>
+        <ul class="discounts" id="modalDiscounts"></ul>
 
         <p class="modal-description" id="modalDescription"></p>
-
-        <button
-          class="card-button card-button-primary modal-copy"
-          id="modalCopy"
-          type="button"
-        >
-          Copier les informations du lot
-        </button>
       </aside>
     </div>
   </div>
-
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-  <script>
-    /*
-    ================================================================
-    ZONE À MODIFIER
-    ================================================================
-
-    Les photos doivent être placées dans :
-      photo_dal_setting/1.jpg
-      photo_dal_setting/2.jpg
-      ...
-      photo_dal_setting/52.jpg
-
-    Les informations communes ci-dessous sont appliquées à tous les lots.
-    Ensuite, ajoute uniquement les lots différents dans CUSTOM_LOTS.
-
-    Champs disponibles :
-      title
-      tag
-      price
-      unitPrice
-      discount50
-      discount200
-      description
-      hidden: true          // masque temporairement un lot
-    */
-
-    const TOTAL_PHOTOS = 52;
-
-    const DEFAULT_LOT = {
-      title: "Setting Date A Live",
-      tag: "Settei / Model Sheet",
-      price: "10 €",
-      unitPrice: "0,50 € à 2 € l’unité",
-      discount50:
-        "7 € si pris avec d’autres lots et si le total dépasse 50 € après réduction.",
-      discount200:
-        "5 € si pris avec d’autres lots et si le total dépasse 200 € après réduction.",
-      description:
-        "Document de production japonais Date A Live. L’état exact et le contenu du lot sont visibles sur la photo. Des photos complémentaires peuvent être réalisées avant achat."
-    };
-
-    /*
-      EXEMPLES :
-      - Le lot 10 reprend exactement le texte donné dans ta demande.
-      - Modifie, duplique ou supprime les autres exemples librement.
-    */
-    const CUSTOM_LOTS = {
-      1: {
-        title: "Lot 1 — Setting Date A Live",
-        tag: "Archive de production"
+<script>
+    const LOTS = [
+      {
+            "id": 1,
+            "image": "photo_dal_setting/1.jpg",
+            "title": "Lot 36 — Mayuri Ange",
+            "tag": "Mayuri Judgment",
+            "price": "15 €",
+            "unitPrice": "0,50 € l’unité",
+            "discounts": [
+                  "10 € si pris avec d’autres lots et que le total dépasse 50 € après réduction.",
+                  "8 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de documents de production consacré à Mayuri, avec références d’ange issues de Date A Live: Mayuri Judgment."
       },
-
-      2: {
-        title: "Lot 2 — Setting Date A Live",
-        tag: "Archive de production"
+      {
+            "id": 2,
+            "image": "photo_dal_setting/2.jpg",
+            "title": "Lot 10 — Setting Décors",
+            "tag": "Décors",
+            "price": "10 €",
+            "unitPrice": "0,50 € à 2 € l’unité",
+            "discounts": [
+                  "7 € si pris avec d’autres lots et que le total dépasse 50 € après réduction.",
+                  "5 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de décors et d’éléments visuels utilisés comme références pendant la production de Date A Live."
       },
-
-      10: {
-        title: "Lot 10 — Setting Décor",
-        tag: "Décors",
-        price: "10 €",
-        unitPrice: "0,50 € à 2 € l’unité",
-        discount50:
-          "7 € si pris avec d’autres lots et si le total dépasse 50 € après réduction.",
-        discount200:
-          "5 € si pris avec d’autres lots et si le total dépasse 200 € après réduction."
+      {
+            "id": 3,
+            "image": "photo_dal_setting/3.jpg",
+            "title": "Lot 10 — Setting Décors",
+            "tag": "Décors",
+            "price": "8 €",
+            "unitPrice": "0,50 € à 1 € l’unité",
+            "discounts": [
+                  "6 € si pris avec d’autres lots et que le total dépasse 50 € après réduction.",
+                  "4 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de décors et d’éléments visuels utilisés comme références pendant la production de Date A Live."
+      },
+      {
+            "id": 4,
+            "image": "photo_dal_setting/4.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "45 €",
+            "unitPrice": "5 € à 15 € l’unité",
+            "discounts": [
+                  "35 € si pris avec d’autres lots et que le total dépasse 50 € après réduction.",
+                  "8 € si pris avec d’autres lots et que le total dépasse 25 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 5,
+            "image": "photo_dal_setting/5.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "60 €",
+            "unitPrice": "10 € à 20 € l’unité",
+            "discounts": [
+                  "45 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 6,
+            "image": "photo_dal_setting/6.jpg",
+            "title": "Lot 6 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "40 €",
+            "unitPrice": "10 € à 15 € l’unité",
+            "discounts": [
+                  "30 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 7,
+            "image": "photo_dal_setting/7.jpg",
+            "title": "Lot 9 — Setting Décors",
+            "tag": "Décors",
+            "price": "10 €",
+            "unitPrice": "0,50 € à 5 € l’unité",
+            "discounts": [
+                  "7 € si pris avec d’autres lots et que le total dépasse 50 € après réduction.",
+                  "5 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de décors et d’éléments visuels utilisés comme références pendant la production de Date A Live."
+      },
+      {
+            "id": 8,
+            "image": "photo_dal_setting/8.jpg",
+            "title": "Lot 4 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "5 €",
+            "unitPrice": "1 € à 2 € l’unité",
+            "discounts": [
+                  "3 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 9,
+            "image": "photo_dal_setting/9.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "20 €",
+            "unitPrice": "5 € à 10 € l’unité",
+            "discounts": [
+                  "15 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 10,
+            "image": "photo_dal_setting/10.jpg",
+            "title": "Lot 6 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "15 €",
+            "unitPrice": "5 € l’unité",
+            "discounts": [
+                  "10 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 11,
+            "image": "photo_dal_setting/11.jpg",
+            "title": "Lot 6 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "15 €",
+            "unitPrice": "3 € à 5 € l’unité",
+            "discounts": [
+                  "10 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 12,
+            "image": "photo_dal_setting/12.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "30 €",
+            "unitPrice": "5 € à 10 € l’unité",
+            "discounts": [
+                  "20 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 13,
+            "image": "photo_dal_setting/13.jpg",
+            "title": "Lot 6 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "15 €",
+            "unitPrice": "3 € à 5 € l’unité",
+            "discounts": [
+                  "10 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 14,
+            "image": "photo_dal_setting/14.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "35 €",
+            "unitPrice": "5 € à 10 € l’unité",
+            "discounts": [
+                  "25 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 15,
+            "image": "photo_dal_setting/15.jpg",
+            "title": "Lot 6 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "30 €",
+            "unitPrice": "5 € à 15 € l’unité",
+            "discounts": [
+                  "25 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 16,
+            "image": "photo_dal_setting/16.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "25 €",
+            "unitPrice": "2 € à 5 € l’unité",
+            "discounts": [
+                  "18 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 17,
+            "image": "photo_dal_setting/17.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "25 €",
+            "unitPrice": "2 € à 5 € l’unité",
+            "discounts": [
+                  "18 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 18,
+            "image": "photo_dal_setting/18.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "25 €",
+            "unitPrice": "2 € à 5 € l’unité",
+            "discounts": [
+                  "20 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 19,
+            "image": "photo_dal_setting/19.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "30 €",
+            "unitPrice": "3 € à 6 € l’unité",
+            "discounts": [
+                  "25 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 20,
+            "image": "photo_dal_setting/20.jpg",
+            "title": "Lot 6 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "35 €",
+            "unitPrice": "5 € à 8 € l’unité",
+            "discounts": [
+                  "25 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 21,
+            "image": "photo_dal_setting/21.jpg",
+            "title": "Lot 6 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "35 €",
+            "unitPrice": "2 € à 8 € l’unité",
+            "discounts": [
+                  "25 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 22,
+            "image": "photo_dal_setting/22.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "30 €",
+            "unitPrice": "3 € à 6 € l’unité",
+            "discounts": [
+                  "25 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 23,
+            "image": "photo_dal_setting/23.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "30 €",
+            "unitPrice": "3 € à 8 € l’unité",
+            "discounts": [
+                  "25 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 24,
+            "image": "photo_dal_setting/24.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "30 €",
+            "unitPrice": "3 € à 8 € l’unité",
+            "discounts": [
+                  "25 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 25,
+            "image": "photo_dal_setting/25.jpg",
+            "title": "Lot 6 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "20 €",
+            "unitPrice": "3 € à 8 € l’unité",
+            "discounts": [
+                  "15 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 26,
+            "image": "photo_dal_setting/26.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "50 €",
+            "unitPrice": "5 € à 15 € l’unité",
+            "discounts": [
+                  "40 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 27,
+            "image": "photo_dal_setting/27.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "40 €",
+            "unitPrice": "5 € à 10 € l’unité",
+            "discounts": [
+                  "30 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 28,
+            "image": "photo_dal_setting/28.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "40 €",
+            "unitPrice": "5 € à 15 € l’unité",
+            "discounts": [
+                  "30 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 29,
+            "image": "photo_dal_setting/29.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "40 €",
+            "unitPrice": "5 € à 10 € l’unité",
+            "discounts": [
+                  "30 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 30,
+            "image": "photo_dal_setting/30.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "45 €",
+            "unitPrice": "5 € à 15 € l’unité",
+            "discounts": [
+                  "35 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 31,
+            "image": "photo_dal_setting/31.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "100 €",
+            "unitPrice": "15 € à 25 € l’unité",
+            "discounts": [
+                  "70 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 32,
+            "image": "photo_dal_setting/32.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "60 €",
+            "unitPrice": "5 € à 25 € l’unité",
+            "discounts": [
+                  "45 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 33,
+            "image": "photo_dal_setting/33.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "45 €",
+            "unitPrice": "3 € à 10 € l’unité",
+            "discounts": [
+                  "35 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 34,
+            "image": "photo_dal_setting/34.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "60 €",
+            "unitPrice": "5 € à 20 € l’unité",
+            "discounts": [
+                  "45 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 35,
+            "image": "photo_dal_setting/35.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "60 €",
+            "unitPrice": "5 € à 25 € l’unité",
+            "discounts": [
+                  "45 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 36,
+            "image": "photo_dal_setting/36.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "45 €",
+            "unitPrice": "3 € à 10 € l’unité",
+            "discounts": [
+                  "35 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 37,
+            "image": "photo_dal_setting/37.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "40 €",
+            "unitPrice": "3 € à 8 € l’unité",
+            "discounts": [
+                  "30 € si pris avec d’autres lots et que le total dépasse 50 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 38,
+            "image": "photo_dal_setting/38.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "100 €",
+            "unitPrice": "15 € à 25 € l’unité",
+            "discounts": [
+                  "70 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 39,
+            "image": "photo_dal_setting/39.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "100 €",
+            "unitPrice": "10 € à 25 € l’unité",
+            "discounts": [
+                  "70 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 40,
+            "image": "photo_dal_setting/40.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "50 €",
+            "unitPrice": "5 € à 15 € l’unité",
+            "discounts": [
+                  "35 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 41,
+            "image": "photo_dal_setting/41.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "100 €",
+            "unitPrice": "10 € à 25 € l’unité",
+            "discounts": [
+                  "70 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 42,
+            "image": "photo_dal_setting/42.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "100 €",
+            "unitPrice": "10 € à 25 € l’unité",
+            "discounts": [
+                  "70 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 43,
+            "image": "photo_dal_setting/43.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "100 €",
+            "unitPrice": "10 € à 25 € l’unité",
+            "discounts": [
+                  "70 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 44,
+            "image": "photo_dal_setting/44.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "60 €",
+            "unitPrice": "5 € à 15 € l’unité",
+            "discounts": [
+                  "40 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 45,
+            "image": "photo_dal_setting/45.jpg",
+            "title": "Lot 2 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "40 €",
+            "unitPrice": "25 € l’unité",
+            "discounts": [
+                  "30 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 46,
+            "image": "photo_dal_setting/46.jpg",
+            "title": "Lot 2 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "40 €",
+            "unitPrice": "25 € l’unité",
+            "discounts": [
+                  "30 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 47,
+            "image": "photo_dal_setting/47.jpg",
+            "title": "Lot 2 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "35 €",
+            "unitPrice": "20 € l’unité",
+            "discounts": [
+                  "25 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 48,
+            "image": "photo_dal_setting/48.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "100 €",
+            "unitPrice": "10 € à 25 € l’unité",
+            "discounts": [
+                  "70 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 49,
+            "image": "photo_dal_setting/49.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "100 €",
+            "unitPrice": "5 € à 25 € l’unité",
+            "discounts": [
+                  "70 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 50,
+            "image": "photo_dal_setting/50.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "70 €",
+            "unitPrice": "10 € à 25 € l’unité",
+            "discounts": [
+                  "50 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 51,
+            "image": "photo_dal_setting/51.jpg",
+            "title": "Lot 9 — Setting Personnages",
+            "tag": "Personnages",
+            "price": "40 €",
+            "unitPrice": "5 € à 15 € l’unité",
+            "discounts": [
+                  "25 € si pris avec d’autres lots et que le total dépasse 200 € après réduction."
+            ],
+            "description": "Lot de settei de personnages utilisé comme référence pendant la production de Date A Live."
+      },
+      {
+            "id": 52,
+            "image": "photo_dal_setting/52.jpg",
+            "title": "Lot 52 — Setting Date A Live",
+            "tag": "À compléter",
+            "price": "Prix à compléter",
+            "unitPrice": "Informations non fournies",
+            "discounts": [],
+            "description": "La photo 52 est intégrée au portfolio. Il reste uniquement à renseigner son titre et son tarif."
       }
-
-      /*
-      Exemple Kurumi :
-
-      15: {
-        title: "Lot 15 — Kurumi Tokisaki",
-        tag: "Character Design",
-        price: "25 €",
-        unitPrice: "Prix pour la feuille présentée",
-        discount50:
-          "22 € si pris avec d’autres lots et si le total dépasse 50 € après réduction.",
-        discount200:
-          "18 € si pris avec d’autres lots et si le total dépasse 200 € après réduction.",
-        description:
-          "Model sheet de Kurumi Tokisaki provenant d’un set de références de production japonais."
-      }
-      */
-    };
-
-    /*
-    ================================================================
-    FIN DE LA ZONE À MODIFIER
-    ================================================================
-    */
-
-    const lots = Array.from({ length: TOTAL_PHOTOS }, (_, index) => {
-      const id = index + 1;
-      const custom = CUSTOM_LOTS[id] || {};
-
-      return {
-        id,
-        image: `photo_dal_setting/${id}.jpg`,
-        title: custom.title || `Lot ${id} — ${DEFAULT_LOT.title}`,
-        tag: custom.tag || DEFAULT_LOT.tag,
-        price: custom.price || DEFAULT_LOT.price,
-        unitPrice: custom.unitPrice || DEFAULT_LOT.unitPrice,
-        discount50: custom.discount50 || DEFAULT_LOT.discount50,
-        discount200: custom.discount200 || DEFAULT_LOT.discount200,
-        description: custom.description || DEFAULT_LOT.description,
-        hidden: Boolean(custom.hidden)
-      };
-    }).filter((lot) => !lot.hidden);
+];
 
     const gallery = document.getElementById("gallery");
     const searchInput = document.getElementById("searchInput");
     const resultCount = document.getElementById("resultCount");
     const emptyState = document.getElementById("emptyState");
-    const toast = document.getElementById("toast");
 
     const modal = document.getElementById("modal");
     const modalBackdrop = document.getElementById("modalBackdrop");
@@ -1197,77 +1700,44 @@
     const modalTitle = document.getElementById("modalTitle");
     const modalTag = document.getElementById("modalTag");
     const modalPrice = document.getElementById("modalPrice");
-    const modalDiscount50 = document.getElementById("modalDiscount50");
-    const modalDiscount200 = document.getElementById("modalDiscount200");
+    const modalDiscounts = document.getElementById("modalDiscounts");
     const modalDescription = document.getElementById("modalDescription");
-    const modalCopy = document.getElementById("modalCopy");
     const modalPrev = document.getElementById("modalPrev");
     const modalNext = document.getElementById("modalNext");
 
-    let visibleLots = [...lots];
+    let visibleLots = [...LOTS];
     let currentModalIndex = 0;
     let lastFocusedElement = null;
-    let toastTimeout = null;
 
     const normalizeText = (value) =>
-      value
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
+      value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
     function getLotText(lot) {
       return [
-        `Lot ${lot.id}`,
+        `Photo ${lot.id}`,
         lot.title,
         lot.tag,
         lot.price,
         lot.unitPrice,
-        lot.discount50,
-        lot.discount200,
+        ...lot.discounts,
         lot.description
       ].join(" ");
     }
 
-    function getCopyText(lot) {
-      return [
-        lot.title,
-        `${lot.price} / ${lot.unitPrice}`,
-        lot.discount50,
-        lot.discount200
-      ].join("\n");
-    }
-
-    function showToast(message) {
-      toast.textContent = message;
-      toast.classList.add("visible");
-
-      window.clearTimeout(toastTimeout);
-      toastTimeout = window.setTimeout(() => {
-        toast.classList.remove("visible");
-      }, 2200);
-    }
-
-    async function copyText(text, successMessage) {
-      try {
-        await navigator.clipboard.writeText(text);
-        showToast(successMessage);
-      } catch {
-        const textarea = document.createElement("textarea");
-        textarea.value = text;
-        textarea.style.position = "fixed";
-        textarea.style.opacity = "0";
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand("copy");
-        textarea.remove();
-        showToast(successMessage);
-      }
+    function buildDiscountList(discounts) {
+      const list = document.createElement("ul");
+      list.className = "discounts";
+      discounts.forEach((discount) => {
+        const item = document.createElement("li");
+        item.textContent = discount;
+        list.appendChild(item);
+      });
+      return list;
     }
 
     function createCard(lot) {
       const card = document.createElement("article");
       card.className = "lot-card";
-      card.dataset.search = normalizeText(getLotText(lot));
 
       const imageButton = document.createElement("button");
       imageButton.className = "image-button";
@@ -1281,7 +1751,6 @@
       image.alt = `${lot.title} — document de production Date A Live`;
       image.loading = "lazy";
       image.decoding = "async";
-
       image.addEventListener("error", () => {
         imageButton.innerHTML = `
           <div class="image-error">
@@ -1300,50 +1769,37 @@
         </svg>
         Agrandir
       `;
-
       imageButton.append(image, overlay);
 
       const content = document.createElement("div");
       content.className = "lot-content";
 
-      content.innerHTML = `
-        <div class="lot-topline">
-          <h2 class="lot-title">${lot.title}</h2>
-          <span class="lot-number">N° ${String(lot.id).padStart(2, "0")}</span>
-        </div>
+      const topLine = document.createElement("div");
+      topLine.className = "lot-topline";
 
-        <span class="lot-tag">${lot.tag}</span>
+      const title = document.createElement("h2");
+      title.className = "lot-title";
+      title.textContent = lot.title;
 
-        <p class="price">
-          ${lot.price}
-          <small>${lot.unitPrice}</small>
-        </p>
+      const number = document.createElement("span");
+      number.className = "lot-number";
+      number.textContent = `Photo ${String(lot.id).padStart(2, "0")}`;
 
-        <ul class="discounts">
-          <li>${lot.discount50}</li>
-          <li>${lot.discount200}</li>
-        </ul>
+      topLine.append(title, number);
 
-        <div class="card-actions">
-          <button class="card-button card-button-primary open-lot" type="button">
-            Voir en grand
-          </button>
+      const tag = document.createElement("span");
+      tag.className = "lot-tag";
+      tag.textContent = lot.tag;
 
-          <button
-            class="card-button copy-lot"
-            type="button"
-            aria-label="Copier les informations du lot ${lot.id}"
-            title="Copier les informations"
-          >
-            Copier
-          </button>
-        </div>
-      `;
+      const price = document.createElement("p");
+      price.className = "price";
+      price.append(document.createTextNode(lot.price));
+      const unit = document.createElement("small");
+      unit.textContent = lot.unitPrice;
+      price.appendChild(unit);
 
-      content.querySelector(".open-lot").addEventListener("click", () => openModal(lot.id));
-      content.querySelector(".copy-lot").addEventListener("click", () => {
-        copyText(getCopyText(lot), `Informations du lot ${lot.id} copiées.`);
-      });
+      content.append(topLine, tag, price);
+      if (lot.discounts.length) content.appendChild(buildDiscountList(lot.discounts));
 
       card.append(imageButton, content);
       return card;
@@ -1351,28 +1807,24 @@
 
     function renderGallery(items) {
       gallery.replaceChildren(...items.map(createCard));
-      resultCount.textContent = `${items.length} lot${items.length > 1 ? "s" : ""} affiché${items.length > 1 ? "s" : ""}`;
+      resultCount.textContent =
+        `${items.length} lot${items.length > 1 ? "s" : ""} affiché${items.length > 1 ? "s" : ""}`;
       emptyState.classList.toggle("visible", items.length === 0);
     }
 
     function filterLots() {
       const query = normalizeText(searchInput.value.trim());
-
       visibleLots = query
-        ? lots.filter((lot) => normalizeText(getLotText(lot)).includes(query))
-        : [...lots];
-
+        ? LOTS.filter((lot) => normalizeText(getLotText(lot)).includes(query))
+        : [...LOTS];
       renderGallery(visibleLots);
     }
 
     function openModal(lotId) {
-      const index = visibleLots.findIndex((lot) => lot.id === lotId);
-      const fallbackIndex = lots.findIndex((lot) => lot.id === lotId);
-      const source = index >= 0 ? visibleLots : lots;
-
-      currentModalIndex = index >= 0 ? index : fallbackIndex;
+      const source = visibleLots.length ? visibleLots : LOTS;
+      const index = source.findIndex((lot) => lot.id === lotId);
+      currentModalIndex = index >= 0 ? index : 0;
       lastFocusedElement = document.activeElement;
-
       updateModal(source[currentModalIndex], source);
       modal.classList.add("open");
       modal.setAttribute("aria-hidden", "false");
@@ -1382,21 +1834,24 @@
 
     function updateModal(lot, source = visibleLots) {
       if (!lot) return;
-
       modalImage.src = lot.image;
       modalImage.alt = `${lot.title} — document de production Date A Live`;
-      modalNumber.textContent = `Lot n° ${String(lot.id).padStart(2, "0")}`;
+      modalNumber.textContent = `Photo n° ${String(lot.id).padStart(2, "0")}`;
       modalTitle.textContent = lot.title;
       modalTag.textContent = lot.tag;
-      modalPrice.innerHTML = `${lot.price}<small>${lot.unitPrice}</small>`;
-      modalDiscount50.textContent = lot.discount50;
-      modalDiscount200.textContent = lot.discount200;
+      modalPrice.replaceChildren(document.createTextNode(lot.price));
+      const unit = document.createElement("small");
+      unit.textContent = lot.unitPrice;
+      modalPrice.appendChild(unit);
+
+      modalDiscounts.replaceChildren();
+      lot.discounts.forEach((discount) => {
+        const item = document.createElement("li");
+        item.textContent = discount;
+        modalDiscounts.appendChild(item);
+      });
+      modalDiscounts.hidden = lot.discounts.length === 0;
       modalDescription.textContent = lot.description;
-
-      modalCopy.onclick = () => {
-        copyText(getCopyText(lot), `Informations du lot ${lot.id} copiées.`);
-      };
-
       modalPrev.disabled = source.length <= 1;
       modalNext.disabled = source.length <= 1;
     }
@@ -1406,30 +1861,17 @@
       modal.setAttribute("aria-hidden", "true");
       document.body.classList.remove("modal-open");
       modalImage.src = "";
-
-      if (lastFocusedElement) {
-        lastFocusedElement.focus();
-      }
+      if (lastFocusedElement) lastFocusedElement.focus();
     }
 
     function changeModal(direction) {
-      const source = visibleLots.length ? visibleLots : lots;
+      const source = visibleLots.length ? visibleLots : LOTS;
       if (!source.length) return;
-
-      currentModalIndex =
-        (currentModalIndex + direction + source.length) % source.length;
-
+      currentModalIndex = (currentModalIndex + direction + source.length) % source.length;
       updateModal(source[currentModalIndex], source);
     }
 
     searchInput.addEventListener("input", filterLots);
-
-    document
-      .getElementById("copyPortfolioLink")
-      .addEventListener("click", () =>
-        copyText(window.location.href, "Lien du portfolio copié.")
-      );
-
     modalClose.addEventListener("click", closeModal);
     modalBackdrop.addEventListener("click", closeModal);
     modalPrev.addEventListener("click", () => changeModal(-1));
@@ -1437,13 +1879,12 @@
 
     document.addEventListener("keydown", (event) => {
       if (!modal.classList.contains("open")) return;
-
       if (event.key === "Escape") closeModal();
       if (event.key === "ArrowLeft") changeModal(-1);
       if (event.key === "ArrowRight") changeModal(1);
     });
 
-    renderGallery(lots);
+    renderGallery(LOTS);
   </script>
 </body>
 </html>
